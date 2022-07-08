@@ -232,9 +232,9 @@ namespace proyecto_ñañi
             this.materialLabel2.Location = new System.Drawing.Point(25, 208);
             this.materialLabel2.MouseState = MaterialSkin.MouseState.HOVER;
             this.materialLabel2.Name = "materialLabel2";
-            this.materialLabel2.Size = new System.Drawing.Size(165, 24);
+            this.materialLabel2.Size = new System.Drawing.Size(255, 30);
             this.materialLabel2.TabIndex = 16;
-            this.materialLabel2.Text = "Nombre completo";
+            this.materialLabel2.Text = "Nombre de la empresa";
             // 
             // txt_nombre
             // 
