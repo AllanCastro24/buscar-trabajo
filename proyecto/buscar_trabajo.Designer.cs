@@ -125,9 +125,9 @@ namespace proyecto_ñañi
             this.materialLabel2.Location = new System.Drawing.Point(13, 153);
             this.materialLabel2.MouseState = MaterialSkin.MouseState.HOVER;
             this.materialLabel2.Name = "materialLabel2";
-            this.materialLabel2.Size = new System.Drawing.Size(255, 30);
+            this.materialLabel2.Size = new System.Drawing.Size(126, 30);
             this.materialLabel2.TabIndex = 6;
-            this.materialLabel2.Text = "Nombre de la empresa";
+            this.materialLabel2.Text = "Su nombre";
             // 
             // materialLabel3
             // 

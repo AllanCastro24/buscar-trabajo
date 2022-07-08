@@ -68,15 +68,17 @@ namespace proyecto_ñañi
                 //Guarda el contenido de cada linea
                 var line = lector.ReadLine();
                 //Nombre de empresa, edad, tiempo y correo
-                var cols = line.Split(',');
+                if (line != ",,,,,") { 
+                    var cols = line.Split(',');
 
-                DataRow dr = tbl.NewRow();
-                for (int cIndex = 0; cIndex < 6; cIndex++)
-                {
-                    dr[cIndex] = cols[cIndex];
+                    DataRow dr = tbl.NewRow();
+                    for (int cIndex = 0; cIndex < 6; cIndex++)
+                    {
+                        dr[cIndex] = cols[cIndex];
+                    }
+
+                    tbl.Rows.Add(dr);
                 }
-
-                tbl.Rows.Add(dr);
             }
             lector.Close();
             return tbl;
@@ -84,8 +86,9 @@ namespace proyecto_ñañi
 
         private void materialRaisedButton2_Click(object sender, EventArgs e)
         {
+            dg_datos.DataSource = "";
             dg_datos.Columns.Clear();
-            
+            //dg_datos.Rows.Clear();
             dg_datos.DataSource = ConvertToDataTable();
 
             txt_edad.Clear();
@@ -101,16 +104,110 @@ namespace proyecto_ñañi
         {
             if (txt_correo.Text != "" && txt_edad.Text != "" && txt_nombre.Text != "" && cb_estudio.Text != "" && cb_tiempo.Text != "")
             {
-                for (int x = 0; x < dg_datos.Rows.Count; x++)
+                //Exportamos de nuevo el datagrid
+                string[,] conjunto = new string[dg_datos.Rows.Count, dg_datos.Columns.Count];
+                string[,] conjunto_modificado = new string[dg_datos.Rows.Count, dg_datos.Columns.Count];
+                foreach (DataGridViewRow row in dg_datos.Rows)
                 {
-                    //Recorrer datagrid y buscar trabajos adecuados
-                    
+                    if (!row.IsNewRow)
+                    {
+                        foreach (DataGridViewCell cel in row.Cells)
+                        {
+                            conjunto[cel.RowIndex, cel.ColumnIndex] = cel.Value.ToString();
+                        }
+                    }
                 }
+
+                //Buscar empleos
+                for (int i = 0; i < dg_datos.Rows.Count; i++)
+                {
+                    if (conjunto[i, 4] != "")
+                    {
+                        if (Int16.Parse(txt_edad.Text) >= Int16.Parse(conjunto[i, 4]) && cb_tiempo.Text == conjunto[i, 3] && cb_estudio.Text == conjunto[i, 5])
+                        {
+                            conjunto_modificado[i, 0] = conjunto[i, 0];
+                            conjunto_modificado[i, 1] = conjunto[i, 1];
+                            conjunto_modificado[i, 4] = conjunto[i, 4];
+                            conjunto_modificado[i, 2] = conjunto[i, 2];
+                            conjunto_modificado[i, 5] = conjunto[i, 5];
+                            conjunto_modificado[i, 3] = conjunto[i, 3];
+                        }
+                        else
+                        {
+                        }
+                    }
+                    else
+                    {
+                    }
+                }
+
+                //Borrar archivo txt
+                File.Delete(@"C:\archivo\empleos_filtrado.csv");
+
+                //Crear nuevo archivo y guardar la matriz
+                File.Create(@"C:\archivo\empleos_filtrado.csv").Close();
+
+                // Insertar en el csv
+                for (int i = 0; i < dg_datos.Rows.Count; i++)
+                {
+                    File.AppendAllText(@"C:\archivo\empleos_filtrado.csv", conjunto_modificado[i, 0] + "," + conjunto_modificado[i, 1] + "," + conjunto_modificado[i, 2] + "," + conjunto_modificado[i, 3] + "," + conjunto_modificado[i, 4] + "," + conjunto_modificado[i, 5] + "\n");
+                }
+                MessageBox.Show("Gracias por confiar en nosotros" + txt_nombre.Text, "Mensaje del sistema");
+                //Limpiar Datagrid
+                dg_datos.DataSource = "";
+                dg_datos.Columns.Clear();
+                //dg_datos.Rows.Clear();
+                dg_datos.DataSource = CargarTrabajos();
+
+                //Limpiar forms
+                cb_estudio.Text = "";
+                cb_tiempo.Text = "";
+                txt_correo.Text = "";
+                txt_edad.Text = "";
+                txt_nombre.Text = "";
             }
             else
             {
                 MessageBox.Show("Aun faltan datos por llenar","Mensaje del sistema");
             }
+        }
+
+        public DataTable CargarTrabajos()
+        {
+            String[] columnas = new String[6];
+            columnas[0] = "Clave";
+            columnas[1] = "Empresa";
+            columnas[2] = "Correo";
+            columnas[3] = "Tiempo";
+            columnas[4] = "Edad";
+            columnas[5] = "Escolaridad";
+            DataTable tbl = new DataTable();
+            //Se crea variable llamada: lector, para abrir el archivo csv donde están almacenadas los datos de los alumnos.
+            var lector = new StreamReader(File.OpenRead(@"C:\archivo\empleos_filtrado.csv"));
+            for (int col = 0; col < 6; col++)
+                tbl.Columns.Add(new DataColumn("Columna " + (columnas[col]).ToString()));
+            //En el ciclo while, recorre todas las lineas del archivo
+
+            while (!lector.EndOfStream)
+            {
+                //Guarda el contenido de cada linea
+                var line = lector.ReadLine();
+                //Nombre de empresa, edad, tiempo y correo
+                if (line != ",,,,,")
+                {
+                    var cols = line.Split(',');
+
+                    DataRow dr = tbl.NewRow();
+                    for (int cIndex = 0; cIndex < 6; cIndex++)
+                    {
+                        dr[cIndex] = cols[cIndex];
+                    }
+
+                    tbl.Rows.Add(dr);
+                }
+            }
+            lector.Close();
+            return tbl;
         }
     }
 }
