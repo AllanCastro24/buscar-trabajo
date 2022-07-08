@@ -53,15 +53,18 @@ namespace proyecto_ñañi
                 //Guarda el contenido de cada linea
                 var line = lector.ReadLine();
                 //Nombre de empresa, edad, tiempo y correo
-                var cols = line.Split(',');
-
-                DataRow dr = tbl.NewRow();
-                for (int cIndex = 0; cIndex < 6; cIndex++)
+                if (line != ",,,,,")
                 {
-                    dr[cIndex] = cols[cIndex];
-                }
+                    var cols = line.Split(',');
 
-                tbl.Rows.Add(dr);
+                    DataRow dr = tbl.NewRow();
+                    for (int cIndex = 0; cIndex < 6; cIndex++)
+                    {
+                        dr[cIndex] = cols[cIndex];
+                    }
+
+                    tbl.Rows.Add(dr);
+                }
             }
             lector.Close();
             return tbl;
