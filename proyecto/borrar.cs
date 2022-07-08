@@ -93,51 +93,57 @@ namespace proyecto_ñañi
 
         private void btn_borrar_Click(object sender, EventArgs e)
         {
-            //Exportamos de nuevo el datagrid
-            string[,] conjunto = new string[dg_datos.Rows.Count, dg_datos.Columns.Count];
-            string[,] conjunto_modificado = new string[dg_datos.Rows.Count, dg_datos.Columns.Count];
-            foreach (DataGridViewRow row in dg_datos.Rows)
-            {
-                if (!row.IsNewRow)
+            if (cb_datos.Text != "") { 
+                //Exportamos de nuevo el datagrid
+                string[,] conjunto = new string[dg_datos.Rows.Count, dg_datos.Columns.Count];
+                string[,] conjunto_modificado = new string[dg_datos.Rows.Count, dg_datos.Columns.Count];
+                foreach (DataGridViewRow row in dg_datos.Rows)
                 {
-                    foreach (DataGridViewCell cel in row.Cells)
+                    if (!row.IsNewRow)
                     {
-                        conjunto[cel.RowIndex, cel.ColumnIndex] = cel.Value.ToString();
+                        foreach (DataGridViewCell cel in row.Cells)
+                        {
+                            conjunto[cel.RowIndex, cel.ColumnIndex] = cel.Value.ToString();
+                        }
+                    }
+                }
+                //Dato eliminado
+                for (int i = 0; i < dg_datos.Rows.Count; i++)
+                {
+                    for (int j = 0; j < dg_datos.Columns.Count; j++)
+                    {
+                        if (conjunto[i, 0] != cb_datos.Text.Substring(0,1))
+                        {
+                            conjunto_modificado[i, j] = conjunto[i, j];
+                        }
+                    }
+                }
+                //Borrar archivo txt
+                File.Delete(@"C:\archivo\empleos.csv");
+
+                //Crear nuevo archivo y guardar la matriz
+                File.Create(@"C:\archivo\empleos.csv").Close();
+
+                // Insertar en el csv
+                for (int i = 0; i < dg_datos.Rows.Count; i++)
+                {
+                    File.AppendAllText(@"C:\archivo\empleos.csv", conjunto_modificado[i, 0] + "," + conjunto_modificado[i, 1] + "," + conjunto_modificado[i, 2] + "," + conjunto_modificado[i, 3] + "," + conjunto_modificado[i, 4] + "," + conjunto_modificado[i, 5] + "\n");
+                }
+                MessageBox.Show("Registro eliminado con exito", "Mensaje del sistema");
+                dg_datos.DataSource = ConvertToDataTable();
+                cb_datos.Items.Clear();
+                cb_datos.Text = "";
+                for (int i = 0; i < dg_datos.Rows.Count; i++)
+                {
+                    if (conjunto_modificado[i, 0] != "")
+                    {
+                        cb_datos.Items.Add(conjunto_modificado[i, 0] + " "+ conjunto_modificado[i, 1]);
                     }
                 }
             }
-            //Dato eliminado
-            for (int i = 0; i < dg_datos.Rows.Count; i++)
+            else
             {
-                for (int j = 0; j < dg_datos.Columns.Count; j++)
-                {
-                    if (conjunto[i, 0] != cb_datos.Text.Substring(0,1))
-                    {
-                        conjunto_modificado[i, j] = conjunto[i, j];
-                    }
-                }
-            }
-            //Borrar archivo txt
-            File.Delete(@"C:\archivo\empleos.csv");
-
-            //Crear nuevo archivo y guardar la matriz
-            File.Create(@"C:\archivo\empleos.csv").Close();
-
-            // Insertar en el csv
-            for (int i = 0; i < dg_datos.Rows.Count; i++)
-            {
-                File.AppendAllText(@"C:\archivo\empleos.csv", conjunto_modificado[i, 0] + "," + conjunto_modificado[i, 1] + "," + conjunto_modificado[i, 2] + "," + conjunto_modificado[i, 3] + "," + conjunto_modificado[i, 4] + "," + conjunto_modificado[i, 5] + "\n");
-            }
-            MessageBox.Show("Registro eliminado con exito", "Mensaje del sistema");
-            dg_datos.DataSource = ConvertToDataTable();
-            cb_datos.Items.Clear();
-            cb_datos.Text = "";
-            for (int i = 0; i < dg_datos.Rows.Count; i++)
-            {
-                if (conjunto_modificado[i, 0] != "")
-                {
-                    cb_datos.Items.Add(conjunto_modificado[i, 0] + " - " + conjunto_modificado[i, 1]);
-                }
+                MessageBox.Show("No seleccionó un registro","Mensaje del sistema");
             }
         }
     }
