@@ -63,7 +63,7 @@ namespace proyecto_ñañi
 
                 tbl.Rows.Add(dr);
             }
-
+            lector.Close();
             return tbl;
         }
     }

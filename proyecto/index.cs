@@ -32,7 +32,7 @@ namespace proyecto_ñañi
 
             if (!File.Exists(@"C:\archivo\empleos.csv"))
             {
-                File.Create(@"C:\archivo\empleos.csv");
+                File.Create(@"C:\archivo\empleos.csv").Close();
             }
 
         }
